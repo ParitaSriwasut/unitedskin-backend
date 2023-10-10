@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String         @unique
+  password     String
+  phoneNumber  Int
+  address      String
+  Payment      Payment[]
+  ShoppingCart ShoppingCart[]
+  Order        Order[]
+}
+
+model Order {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  payment     Payment  @relation(fields: [paymentId], references: [id])
+  paymentId   Int
+  totalAmount Decimal
+  status      String
+  createdAt   DateTime
+  updatedAt   DateTime
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  user          User     @relation(fields: [userId], references: [id])
+  userId        Int
+  sumAmount     Decimal
+  paymentMethod String
+  createdAt     DateTime
+  updatedAt     DateTime
+  Order         Order[]
+}
+
+model ShoppingCart {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int
+  quantity   Int
+  totalPrice Decimal
+  createdAt  DateTime
+}
+
+model Product {
+  id               Int            @id @default(autoincrement())
+  cateory          Cateory        @relation(fields: [cateoryId], references: [id])
+  cateoryId        Int
+  productName      String
+  shortDescription String
+  guide            String
+  productPrice     Decimal
+  image            String
+  OrderItem        OrderItem[]
+  ShoppingCart     ShoppingCart[]
+}
+
+model Cateory {
+  id           Int       @id @default(autoincrement())
+  categoryName String
+  image        String
+  Product      Product[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+}
+
+enum Role {
+  USER
+  ADMIN
+}
