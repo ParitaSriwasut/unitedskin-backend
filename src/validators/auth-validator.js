@@ -8,11 +8,14 @@ const registerSchema = Joi.object({
     .pattern(/^[a-zA-Z0-9]{6,30}$/)
     .trim()
     .required(),
-  confirmPassword: Joi.string()
-    .valid(Joi.ref("password"))
-    .trim()
-    .required.strip(),
-  role: Joi.string(),
+  phoneNumber: Joi.number().integer().required(),
+  address: Joi.string().trim().required(),
+  // confirmPassword: Joi.string()
+  //   .valid(Joi.ref("password"))
+  //   .trim()
+  //   .required()
+  //   .strip(),
+  // role: Joi.string(),
 });
 
 exports.registerSchema = registerSchema;
