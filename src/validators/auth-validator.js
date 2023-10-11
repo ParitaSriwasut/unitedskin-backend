@@ -1,20 +1,15 @@
 const Joi = require("joi");
 
 const registerSchema = Joi.object({
-  firstName: Joi.string().trim().required(),
-  lastName: Joi.string().trim().required(),
+  name: Joi.string().trim().required(),
+  username: Joi.string().trim().required(),
   email: Joi.string().trim().email().required(),
   password: Joi.string()
     .pattern(/^[a-zA-Z0-9]{6,30}$/)
     .trim()
     .required(),
-  phoneNumber: Joi.number().integer().required(),
-  address: Joi.string().trim().required(),
-  // confirmPassword: Joi.string()
-  //   .valid(Joi.ref("password"))
-  //   .trim()
-  //   .required()
-  //   .strip(),
+  confirmPassword: Joi.string().valid(Joi.ref("password")).trim().required(),
+  mobile: Joi.number().integer().required(),
   // role: Joi.string(),
 });
 

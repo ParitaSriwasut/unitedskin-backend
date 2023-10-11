@@ -8,16 +8,16 @@ datasource db {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  firstName    String
-  lastName     String
-  email        String         @unique
-  password     String
-  phoneNumber  Int
-  address      String
-  Payment      Payment[]
-  ShoppingCart ShoppingCart[]
-  Order        Order[]
+  id              Int            @id @default(autoincrement())
+  name            String
+  username        String         @unique
+  email           String         @unique
+  password        String
+  confirmPassword String
+  mobile          Int
+  Payment         Payment[]
+  ShoppingCart    ShoppingCart[]
+  Order           Order[]
 }
 
 model Order {
@@ -36,6 +36,7 @@ model Payment {
   id            Int      @id @default(autoincrement())
   user          User     @relation(fields: [userId], references: [id])
   userId        Int
+  address       String
   sumAmount     Decimal
   paymentMethod String
   createdAt     DateTime
