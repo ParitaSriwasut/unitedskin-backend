@@ -34,6 +34,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const { value, error } = loginSchema.validate(req.body);
+    console.log(value);
     if (error) {
       return next(error);
     }
@@ -41,7 +42,7 @@ exports.login = async (req, res, next) => {
     // SELECT * FROM user WHERE email = emailOrMobile OR mobile = emailOrMobile
     const user = await prisma.user.findFirst({
       where: {
-        OR: [{ email: value.email }],
+      username: value.username,
       },
     });
     if (!user) {
