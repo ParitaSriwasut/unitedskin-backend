@@ -18,6 +18,7 @@ model User {
   Payment         Payment[]
   ShoppingCart    ShoppingCart[]
   Order           Order[]
+  role            Role           @default(USER)
 }
 
 model Order {

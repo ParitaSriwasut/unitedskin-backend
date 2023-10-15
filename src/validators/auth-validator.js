@@ -10,7 +10,7 @@ const registerSchema = Joi.object({
     .required(),
   confirmPassword: Joi.string().valid(Joi.ref("password")).trim().required(),
   mobile: Joi.number().integer().required(),
-  // role: Joi.string(),
+  role: Joi.string(),
 });
 
 exports.registerSchema = registerSchema;
