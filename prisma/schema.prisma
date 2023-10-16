@@ -18,7 +18,7 @@ model User {
   Payment         Payment[]
   ShoppingCart    ShoppingCart[]
   Order           Order[]
-  role            Role           @default(USER)
+  isAdmin         Boolean        @default(false)
 }
 
 model Order {
@@ -58,22 +58,14 @@ model ShoppingCart {
 
 model Product {
   id               Int            @id @default(autoincrement())
-  cateory          Cateory        @relation(fields: [cateoryId], references: [id])
-  cateoryId        Int
+  categoryName     CategoryName
   productName      String
   shortDescription String
   guide            String
   productPrice     Decimal
   image            String
-  OrderItem        OrderItem[]
   ShoppingCart     ShoppingCart[]
-}
-
-model Cateory {
-  id           Int       @id @default(autoincrement())
-  categoryName String
-  image        String
-  Product      Product[]
+  OrderItem        OrderItem[]
 }
 
 model OrderItem {
@@ -83,7 +75,9 @@ model OrderItem {
   quantity  Int
 }
 
-enum Role {
-  USER
-  ADMIN
+enum CategoryName {
+  MEN
+  WOMEN
+  KIDS
+  UNISEX
 }

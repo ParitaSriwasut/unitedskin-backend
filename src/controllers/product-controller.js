@@ -1,80 +1,81 @@
-// const fs = require("fs/promise");
-// const createError = require("../utils/create-error");
-// const { upload } = require("../utils/cloudinary-service");
-// const prisma = require("../models/prisma");
+const fs = require("fs").promises;
+const createError = require("../utils/create-error");
+const { upload } = require("../utils/cloudinary-service");
+const prisma = require("../models/prisma");
 
-// const productList = async (targetProductCategory) => {
-//   const productCards = await prisma.product.findMany({
-//     where: {
-     
-//     },
-//   });
+exports.productList = async () => {
+  // TODO: do pagination.
+  const products = await prisma.product.findMany({
+    where: {
+      productCategory: req.query.productCategoryName,
+    },
+    take: req.query.limit,
+    skip: req.query.offset,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
-//   const friendIds = relationship.map((el) =>
-//     el.requesterId === targetUserId ? el.receiverId : el.requesterId
-//   );
-//   return friendIds;
-// };
+  return products;
+};
 
-// exports.createPost = async (req, res, next) => {
-//   try {
-//     const { message } = req.body;
-//     if ((!message || !message.trim()) && !req.file) {
-//       return next(createError("message or image is required", 400));
-//     }
+exports.productDetails = async () => {
+  const product = await prisma.product.findOne({
+    where: {
+      id: req.params.id,
+    },
+  });
 
-//     const data = { userId: req.user.id };
-//     if (req.file) {
-//       data.image = await upload(req.file.path);
-//     }
-//     if (message) {
-//       data.message = message;
-//     }
+  return product;
+};
 
-//     await prisma.post.create({
-//       data: data,
-//     });
-//     res.status(201).json({ message: "post created" });
-//   } catch (err) {
-//     next(err);
-//   } finally {
-//     if (req.file) {
-//       fs.unlink(req.file.path);
-//     }
-//   }
-// };
+exports.createProduct = async (req, res, next) => {
+  try {
+    if (req.user.isAdmin === false) {
+      return next(createError("You are not admin", 403));
+    }
+    //isAdmin : Do it later!
+    const {
+      categoryName,
+      productName,
+      shortDescription,
+      guide,
+      productPrice,
+      imagePath,
+    } = req.body;
+    if (!imagePath) {
+      return next(createError("imagePath is required", 400));
+    }
 
-// exports.getAllPostIncludeFriendPost = async (req, res, next) => {
-//   try {
-//     const friendIds = await getFriendIds(req.user.id); // [6, 12, 7]
-//     // SELECT * FROM posts WHERE userId in (6, 12, 7)
-//     const posts = await prisma.post.findMany({
-//       where: {
-//         userId: {
-//           in: [...friendIds, req.user.id],
-//         },
-//       },
-//       orderBy: {
-//         createAt: "desc",
-//       },
-//       include: {
-//         user: {
-//           select: {
-//             id: true,
-//             firstName: true,
-//             lastName: true,
-//             profileImage: true,
-//           },
-//         },
-//         likes: {
-//           select: {
-//             userId: true,
-//           },
-//         },
-//       },
-//     });
-//     res.status(200).json({ posts });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+    const data = { userId: req.user.id };
+    if (req.file) {
+      data.image = await upload(imagePath);
+    }
+
+    const idx = [MEN, WOMEN, KIDS, UNISEX].findIndex((categoryName) => {
+      return categoryName === req.body.categoryName;
+    });
+    if (idx === -1) {
+      // nothing matched so idx is -1.
+      // we return error.
+      return next(createError("categoryName is invalid", 400));
+    }
+
+    data.productCategory = categoryName;
+    data.productName = productName;
+    data.shortDescription = shortDescription;
+    data.guide = guide;
+    data.productPrice = productPrice;
+
+    await prisma.post.create({
+      data: data,
+    });
+    res.status(201).json({ message: "product created" });
+  } catch (err) {
+    next(err);
+  } finally {
+    if (req.file) {
+      fs.unlink(req.file.path);
+    }
+  }
+};
