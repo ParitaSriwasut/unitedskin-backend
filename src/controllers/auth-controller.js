@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { registerSchema, loginSchema } = require("../validators/auth-validator");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
+const { boolean } = require("joi");
 
 exports.register = async (req, res, next) => {
   try {
@@ -15,6 +16,12 @@ exports.register = async (req, res, next) => {
     const user = await prisma.user.create({
       data: value,
     });
+
+    // const user = await prisma.user.findUnique({
+    //   where: {
+    //     email: value.email,
+    //   },
+    // });
 
     const payload = { userId: user.id };
     const accessToken = jwt.sign(
@@ -42,7 +49,7 @@ exports.login = async (req, res, next) => {
     // SELECT * FROM user WHERE email = emailOrMobile OR mobile = emailOrMobile
     const user = await prisma.user.findFirst({
       where: {
-      username: value.username,
+        username: value.username,
       },
     });
     if (!user) {

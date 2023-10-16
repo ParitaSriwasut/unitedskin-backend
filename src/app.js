@@ -11,7 +11,7 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 
-app.use(authMiddleware);
+app.use('/auth',authMiddleware);
 app.use(notFoundMiddleware);
 app.use(errorMiddleWare);
 
