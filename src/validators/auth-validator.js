@@ -1,3 +1,4 @@
+const { boolean } = require("joi");
 const Joi = require("joi");
 
 const registerSchema = Joi.object({
@@ -10,6 +11,7 @@ const registerSchema = Joi.object({
     .required(),
   confirmPassword: Joi.string().valid(Joi.ref("password")).trim().required(),
   mobile: Joi.number().integer().required(),
+  isAdmin: Joi.boolean(),
 });
 
 exports.registerSchema = registerSchema;

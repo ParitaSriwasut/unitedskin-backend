@@ -2,6 +2,7 @@ const fs = require("fs").promises;
 const createError = require("../utils/create-error");
 const { upload } = require("../utils/cloudinary-service");
 const prisma = require("../models/prisma");
+const { checkProductIdSchema } = require("../validators/product-validator");
 
 exports.productList = async () => {
   // TODO: do pagination.
@@ -30,11 +31,13 @@ exports.productDetails = async () => {
 };
 
 exports.createProduct = async (req, res, next) => {
-  try {
+  try
+  {
+    const { message } = req.body;
     if (req.user.isAdmin === false) {
       return next(createError("You are not admin", 403));
     }
-    //isAdmin : Do it later!
+    //isAdmin : only admin can create products
     const {
       categoryName,
       productName,
@@ -45,6 +48,9 @@ exports.createProduct = async (req, res, next) => {
     } = req.body;
     if (!imagePath) {
       return next(createError("imagePath is required", 400));
+    }
+    if (message) {
+      data.message = message;
     }
 
     const data = { userId: req.user.id };
@@ -79,3 +85,11 @@ exports.createProduct = async (req, res, next) => {
     }
   }
 };
+
+// exports.deleteProduct = async (req, res, next) =>
+// { 
+//   try
+//   {
+//     await product.findOne(req.params.id)
+//   }
+// }

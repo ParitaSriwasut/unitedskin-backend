@@ -17,12 +17,6 @@ exports.register = async (req, res, next) => {
       data: value,
     });
 
-    // const user = await prisma.user.findUnique({
-    //   where: {
-    //     email: value.email,
-    //   },
-    // });
-
     const payload = { userId: user.id };
     const accessToken = jwt.sign(
       payload,
@@ -46,7 +40,6 @@ exports.login = async (req, res, next) => {
       return next(error);
     }
     console.log(value);
-    // SELECT * FROM user WHERE email = emailOrMobile OR mobile = emailOrMobile
     const user = await prisma.user.findFirst({
       where: {
         username: value.username,
