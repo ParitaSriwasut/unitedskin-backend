@@ -4,6 +4,7 @@ const cors = require("cors");
 const express = require("express");
 const authRoute = require("./routes/auth-route");
 const productRoute = require("./routes/product-route");
+const cartRoute = require("./routes/cart-route");
 
 const notFoundMiddleware = require("../src/middlewares/not-found");
 const errorMiddleWare = require("../src/middlewares/error");
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/auth", authRoute);
 app.use("/product", productRoute);
+app.use("/cart", cartRoute);
 app.use(notFoundMiddleware);
 app.use(errorMiddleWare);
 

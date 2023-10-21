@@ -5,13 +5,23 @@ const prisma = require("../models/prisma");
 
 exports.productList = async (req, res, next) => {
   // TODO: do pagination.
-  const products = await prisma.product.findMany({
-    where: {
-      categoryName: req.query.categoryName,
-    },
+  const query = {
     take: req.query.limit,
     skip: req.query.offset,
-  });
+  };
+
+  if (
+    req.query.categoryName === "MEN" ||
+    req.query.categoryName === "WOMEN" ||
+    req.query.categoryName === "KIDS" ||
+    req.query.categoryName === "UNISEX"
+  ) {
+    query.where = {
+      categoryName: req.query.categoryName,
+    };
+  }
+
+  const products = await prisma.product.findMany(query);
 
   res.json({ products });
 };
