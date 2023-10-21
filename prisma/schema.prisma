@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id              Int            @id @default(autoincrement())
-  name            String
-  username        String         @unique
-  email           String         @unique
-  password        String
-  confirmPassword String
-  mobile          Int
-  Payment         Payment[]
-  ShoppingCart    ShoppingCart[]
-  Order           Order[]
-  isAdmin         Boolean        @default(false)
+  id       Int    @id @default(autoincrement())
+  name     String
+  username String @unique
+  email    String @unique
+  password String
+
+  mobile       String
+  Payment      Payment[]
+  ShoppingCart ShoppingCart[]
+  Order        Order[]
+  isAdmin      Boolean        @default(false)
 }
 
 model Order {

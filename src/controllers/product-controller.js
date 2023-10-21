@@ -4,7 +4,7 @@ const { upload } = require("../utils/cloudinary-service");
 const prisma = require("../models/prisma");
 const { checkProductIdSchema } = require("../validators/product-validator");
 
-exports.productList = async () => {
+exports.productList = async (req, res, next) => {
   // TODO: do pagination.
   const products = await prisma.product.findMany({
     where: {
@@ -12,27 +12,26 @@ exports.productList = async () => {
     },
     take: req.query.limit,
     skip: req.query.offset,
-    orderBy: {
-      createdAt: "desc",
-    },
   });
 
-  return products;
+  res.json({ products });
 };
 
-exports.productDetails = async () => {
-  const product = await prisma.product.findOne({
-    where: {
-      id: req.params.id,
-    },
-  });
-
-  return product;
+exports.productDetails = async (req, res, next) => {
+  try {
+    const product = await prisma.product.findFirst({
+      where: {
+        id: +req.params.id,
+      },
+    });
+    res.status(200).json({ product });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.createProduct = async (req, res, next) => {
-  try
-  {
+  try {
     const { message } = req.body;
     if (req.user.isAdmin === false) {
       return next(createError("You are not admin", 403));
@@ -87,7 +86,7 @@ exports.createProduct = async (req, res, next) => {
 };
 
 // exports.deleteProduct = async (req, res, next) =>
-// { 
+// {
 //   try
 //   {
 //     await product.findOne(req.params.id)

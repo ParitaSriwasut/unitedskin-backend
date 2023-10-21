@@ -3,7 +3,11 @@ const productController = require("../controllers/product-controller");
 const authenticateMiddleware = require("../middlewares/authenticate");
 const router = express.Router();
 
-router.get("", authenticateMiddleware, productController.productList);
+router.get(
+  "/",
+  authenticateMiddleware,
+  productController.productList
+);
 
 router.get("/:id", authenticateMiddleware, productController.productDetails);
 

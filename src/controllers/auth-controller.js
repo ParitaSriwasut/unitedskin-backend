@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const { registerSchema, loginSchema } = require("../validators/auth-validator");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
-const { boolean } = require("joi");
 
 exports.register = async (req, res, next) => {
   try {
@@ -14,7 +13,15 @@ exports.register = async (req, res, next) => {
     console.log(value);
     value.password = await bcrypt.hash(value.password, 12);
     const user = await prisma.user.create({
-      data: value,
+      data: {
+        username: value.username,
+        password: value.password,
+        confirmPassword: value.confirmPassword,
+        email: value.email,
+        isAdmin: false,
+        mobile: "" + value.mobile,
+        name: value.name,
+      },
     });
 
     const payload = { userId: user.id };
