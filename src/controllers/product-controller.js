@@ -2,13 +2,12 @@ const fs = require("fs").promises;
 const createError = require("../utils/create-error");
 const { upload } = require("../utils/cloudinary-service");
 const prisma = require("../models/prisma");
-const { checkProductIdSchema } = require("../validators/product-validator");
 
 exports.productList = async (req, res, next) => {
   // TODO: do pagination.
   const products = await prisma.product.findMany({
     where: {
-      productCategory: req.query.productCategoryName,
+      categoryName: req.query.categoryName,
     },
     take: req.query.limit,
     skip: req.query.offset,

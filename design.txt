@@ -1,127 +1,20 @@
-REGISTER
-POST /auth/register
-BODY firstName, lastName, email, password, PhoneNumber, address
-RESPONSE
-201 { accessToken: String, user: { id: Number, firstName: String } }
-400 { message: String, emailOrMobileExist: true }
-500 { message: String }
 
-LOGIN
-POST /auth/login
-BODY emailOrMobile, password
-RESPONSE
-200 { accessToken: String, user: { id: Number, firstName: String } }
-400 { message: String }
-500 { message: String }
+# UnitedSkin Backend
 
-GET AUTHENTICATED USER
-GET /auth/me
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { user: { id: Number, firstName: String, ... } }
-401 { message: String }
-500 { message: String }
+## Run server
 
-UPDATE PROFILE/COVER IMAGE
-PATCH /user
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-BODY profileImage?, coverImage?
-RESPONSE
-200 { profileImage?: String, coverImage?: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
+sh
+pnpm db:setup
 
-GET USER PROFILE BY id
-GET /user/:userId
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { 
-  user: { id: Number, firstName: String, ... }, 
-  status: String, 
-  friends: [ {id: Number, firstName: String, ...} ] 
-}
-401 { message: String }
-500 { message: String }
 
-REQUEST FRIEND
-POST /friend/:receiverId
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { message: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
+```sh
+pnpm dev
 
-REJECT REQUEST
-DELETE /friend/:requesterId/reject
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { message: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
 
-CANCEL REQUEST
-DELETE /friend/:receiverId/cancel
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { message: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
+## Stop Server
 
-UNFRIEND
-DELETE /friend/:friendId/unfriend
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { message: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
+sh
+cntrl + c
 
-ACCEPT FRIEND
-PATCH /friend/:requesterId
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { message: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
 
-CREATE POST
-POST /post
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-BODY message?, image?
-RESPONSE
-201 { message: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
-
-GET ALL POST INCLUDE POST FRIENDS
-GET /post/friend
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { posts: [ { id: Number, message: String, image: String, user: { id: Number, firtsName: String, ... } } ] }
-400 { message: String }
-401 { message: String }
-500 { message: String }
-
-TOGGLE LIKE
-POST /post/:postId/like
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { message: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
-
-DELETE POST
-DELETE /post/:postId
-HEADER AUTHORIZATION Bearer ACCESS_TOKEN
-RESPONSE
-200 { message: String }
-400 { message: String }
-401 { message: String }
-500 { message: String }
+```

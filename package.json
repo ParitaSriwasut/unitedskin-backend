@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "dev": "nodemon src/app.js"
-  },
   "prisma": {
-    "seed": "js-node prisma/seed.js"
+    "schema": "prisma/schema.prisma",
+    "seed": "node prisma/seed.js"
+  },
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "prisma:generate": "pnpx prisma generate",
+    "prisma:migrate": "pnpx prisma migrate dev",
+    "prisma:seed": "pnpx prisma db seed",
+    "db:setup": "pnpm run prisma:generate && pnpm run prisma:migrate && pnpm run prisma:seed",
+    "start": "pnpm run db:setup && node src/app.js"
   },
   "keywords": [],
   "author": "",
