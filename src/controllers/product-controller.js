@@ -104,10 +104,38 @@ exports.updateProduct = async (req, res, next) => {
   }
 };
 
-// exports.deleteProduct = async (req, res, next) =>
-// {
-//   try
-//   {
-//     await product.findOne(req.params.id)
-//   }
-// }
+exports.deleteProduct = async (req, res, next) => {
+  try {
+    if (req.user.isAdmin === false) {
+      return next(createError("You are not admin", 403));
+    }
+    const cart = await prisma.cart.findFirst({
+      where: {
+        productId: +req.params.id,
+      },
+    });
+    if (cart) {
+      res.status(200).json({ reason: "This product is in cart" });
+      return;
+    }
+
+    const order = await prisma.order.findFirst({
+      where: {
+        productId: +req.params.id,
+      },
+    });
+    if (order) {
+      res.status(200).json({ reason: "This product is in order" });
+      return;
+    }
+
+    await prisma.product.delete({
+      where: {
+        id: +req.params.id,
+      },
+    });
+    res.status(200).json({ deleted: true });
+  } catch (err) {
+    next(err);
+  }
+};

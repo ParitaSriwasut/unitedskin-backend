@@ -8,9 +8,6 @@ router.get("", authenticateMiddleware, productController.productList);
 
 router.get("/:id", authenticateMiddleware, productController.productDetails);
 
-// TODO: allow only admin to create product.
-// Add field isAdmin in user model.
-// isAdmin is set to Db directly by RITA.
 router.post(
   "",
   authenticateMiddleware,
@@ -23,5 +20,6 @@ router.put(
   upload.single("file"),
   productController.updateProduct
 );
+router.delete("/:id", authenticateMiddleware, productController.deleteProduct);
 
 module.exports = router;
