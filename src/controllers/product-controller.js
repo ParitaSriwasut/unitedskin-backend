@@ -41,50 +41,60 @@ exports.productDetails = async (req, res, next) => {
 
 exports.createProduct = async (req, res, next) => {
   try {
-    const { message } = req.body;
     if (req.user.isAdmin === false) {
       return next(createError("You are not admin", 403));
     }
-    //isAdmin : only admin can create products
-    const {
-      categoryName,
-      productName,
-      shortDescription,
-      guide,
-      productPrice,
-      imagePath,
-    } = req.body;
-    if (!imagePath) {
-      return next(createError("imagePath is required", 400));
-    }
-    if (message) {
-      data.message = message;
-    }
 
-    const data = { userId: req.user.id };
+    if (!req.file.filename) {
+      return next(createError("filename is required", 400));
+    }
+    const image = await upload(req.file.path);
+
+    const product = await prisma.product.create({
+      data: {
+        categoryName: req.body.categoryName,
+        productName: req.body.productName,
+        shortDescription: req.body.shortDescription,
+        guide: req.body.guide,
+        productPrice: req.body.productPrice,
+        image: image,
+      },
+    });
+    res.status(200).json({ product });
+  } catch (err) {
+    next(err);
+  } finally {
     if (req.file) {
-      data.image = await upload(imagePath);
+      fs.unlink(req.file.path);
+    }
+  }
+};
+
+exports.updateProduct = async (req, res, next) => {
+  try {
+    if (req.user.isAdmin === false) {
+      return next(createError("You are not admin", 403));
     }
 
-    const idx = [MEN, WOMEN, KIDS, UNISEX].findIndex((categoryName) => {
-      return categoryName === req.body.categoryName;
-    });
-    if (idx === -1) {
-      // nothing matched so idx is -1.
-      // we return error.
-      return next(createError("categoryName is invalid", 400));
+    if (!req.file.filename) {
+      return next(createError("filename is required", 400));
     }
+    const image = await upload(req.file.path);
 
-    data.productCategory = categoryName;
-    data.productName = productName;
-    data.shortDescription = shortDescription;
-    data.guide = guide;
-    data.productPrice = productPrice;
-
-    await prisma.post.create({
-      data: data,
+    await prisma.product.update({
+      data: {
+        categoryName: req.body.categoryName,
+        productName: req.body.productName,
+        shortDescription: req.body.shortDescription,
+        guide: req.body.guide,
+        productPrice: req.body.productPrice,
+        image: image,
+      },
+      where: {
+        id: +req.params.id,
+      },
     });
-    res.status(201).json({ message: "product created" });
+    res.status(200).json({ message: "product updated" });
   } catch (err) {
     next(err);
   } finally {

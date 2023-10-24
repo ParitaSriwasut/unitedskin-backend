@@ -25,8 +25,11 @@ model Order {
   id          Int      @id @default(autoincrement())
   user        User     @relation(fields: [userId], references: [id])
   userId      Int
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   Int
   payment     Payment  @relation(fields: [paymentId], references: [id])
   paymentId   Int
+  quantity    Int
   totalAmount Decimal
   status      String
   createdAt   DateTime
@@ -61,18 +64,11 @@ model Product {
   categoryName     CategoryName
   productName      String
   shortDescription String
-  guide            String
+  guide            String       @db.Text
   productPrice     Decimal
-  image            String
+  image            String       @db.Text
   Cart             Cart[]
-  OrderItem        OrderItem[]
-}
-
-model OrderItem {
-  id        Int     @id @default(autoincrement())
-  product   Product @relation(fields: [productId], references: [id])
-  productId Int
-  quantity  Int
+  Order            Order[]
 }
 
 enum CategoryName {
