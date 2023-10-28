@@ -95,3 +95,83 @@ exports.deleteFromCart = async (req, res, next) => {
 
   await this.getCart(req, res, next);
 };
+
+exports.removeFromCart = async (req, res, next) => {
+  const { productId } = req.body;
+  const cart = await prisma.cart.findUnique({
+    where: {
+      productId_userId: {
+        userId: req.user.id,
+        productId: productId,
+      },
+    },
+  });
+
+  if (!cart) {
+    return next(createError("cart not found", 404));
+  }
+  await prisma.cart.delete({
+    where: {
+      productId_userId: {
+        userId: req.user.id,
+        productId: productId,
+      },
+    },
+  });
+
+  await this.getCart(req, res, next);
+};
+
+exports.IncAndDecFromCart = async (req, res, next) => {
+  const { productId } = req.body;
+  userId = req.user.id;
+
+  const cart = await prisma.cart.findFirst(
+    {
+      where: {
+        productId: productId,
+        userId: userId,
+      },
+    },
+    {
+      include: {
+        product: true,
+      },
+    }
+  );
+  const cartRes = await prisma.cart.update({
+    where: {
+      productId_userId: {
+        userId: userId,
+        productId: productId,
+      },
+    },
+    data: {
+      quantity: cart.quantity - 1,
+    },
+  });
+  if (cartRes.quantity === 0) {
+    const cart = await prisma.cart.findUnique({
+      where: {
+        productId_userId: {
+          userId: req.user.id,
+          productId: productId,
+        },
+      },
+    });
+
+    if (!cart) {
+      return next(createError("cart not found", 404));
+    }
+    await prisma.cart.delete({
+      where: {
+        productId_userId: {
+          userId: req.user.id,
+          productId: productId,
+        },
+      },
+    });
+  }
+
+  await this.getCart(req, res, next);
+};

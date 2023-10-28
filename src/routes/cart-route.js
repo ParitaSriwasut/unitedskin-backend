@@ -12,5 +12,4 @@ router.post(
   authenticateMiddleware,
   cartController.deleteFromCart
 );
-
 module.exports = router;
