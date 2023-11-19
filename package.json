@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "morgan": "^1.10.0",
-    "prisma": "^5.4.2"
+    "prisma": "^5.5.2"
   }
 }
