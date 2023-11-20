@@ -22,7 +22,7 @@ exports.addToCart = async (req, res, next) => {
   userId = req.user.id;
   const product = await prisma.product.findFirst({
     where: {
-      id: product,
+      id: productId,
     },
   });
   if (!product) {
@@ -67,7 +67,7 @@ exports.addToCart = async (req, res, next) => {
     });
   }
 
-  await this.addToCart(req, res, next);
+  await this.getCart(req, res, next);
 };
 
 exports.deleteFromCart = async (req, res, next) => {
