@@ -19,7 +19,7 @@ exports.getCart = async (req, res, next) => {
 
 exports.addToCart = async (req, res, next) => {
   const { productId } = req.body;
-  userId = req.user.id;
+  const userId = req.user.id;
   const product = await prisma.product.findFirst({
     where: {
       id: productId,
@@ -74,10 +74,8 @@ exports.deleteFromCart = async (req, res, next) => {
   const { productId } = req.body;
   const cart = await prisma.cart.findFirst({
     where: {
-      productId_userId: {
-        userId: req.user.id,
-        productId: productId,
-      },
+      userId: req.user.id,
+      productId: productId,
     },
   });
 
@@ -86,10 +84,8 @@ exports.deleteFromCart = async (req, res, next) => {
   }
   await prisma.cart.delete({
     where: {
-      productId_userId: {
-        userId: req.user.id,
-        productId: productId,
-      },
+      userId: req.user.id,
+      productId: productId,
     },
   });
 
@@ -99,13 +95,13 @@ exports.deleteFromCart = async (req, res, next) => {
 exports.increaseFromCart = async (req, res, next) => {
   const { productId } = req.body;
   console.log(productId);
-  userId = req.user.id;
+  const userId = req.user.id;
 
   const cart = await prisma.cart.findFirst(
     {
       where: {
+        userId: req.user.id,
         productId: productId,
-        userId: userId,
       },
     },
     {
@@ -114,7 +110,8 @@ exports.increaseFromCart = async (req, res, next) => {
       },
     }
   );
-  const cartRes = await prisma.cart.update({
+
+  await prisma.cart.update({
     where: {
       productId_userId: {
         userId: userId,
@@ -125,23 +122,13 @@ exports.increaseFromCart = async (req, res, next) => {
       quantity: cart.quantity + 1,
     },
   });
-  if (cartRes.quantity === 0) {
-    await prisma.cart.findUnique({
-      where: {
-        productId_userId: {
-          userId: req.user.id,
-          productId: productId,
-        },
-      },
-    });
-  }
 
   await this.getCart(req, res, next);
 };
 
 exports.decreaseFromCart = async (req, res, next) => {
   const { productId } = req.body;
-  userId = req.user.id;
+  const userId = req.user.id;
 
   const cart = await prisma.cart.findFirst(
     {
@@ -156,24 +143,26 @@ exports.decreaseFromCart = async (req, res, next) => {
       },
     }
   );
-  const cartRes = await prisma.cart.update({
-    where: {
-      productId_userId: {
-        userId: userId,
-        productId: productId,
-      },
-    },
-    data: {
-      quantity: cart.quantity - 1,
-    },
-  });
-  if (cartRes.quantity === 0) {
-    await prisma.cart.findFirst({
+
+  if (cart.quantity <= 1) {
+    await prisma.cart.delete({
       where: {
         productId_userId: {
-          userId: req.user.id,
+          userId: userId,
           productId: productId,
         },
+      },
+    });
+  } else {
+    await prisma.cart.update({
+      where: {
+        productId_userId: {
+          userId: userId,
+          productId: productId,
+        },
+      },
+      data: {
+        quantity: cart.quantity - 1,
       },
     });
   }
