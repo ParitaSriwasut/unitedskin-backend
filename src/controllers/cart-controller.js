@@ -94,7 +94,6 @@ exports.deleteFromCart = async (req, res, next) => {
 
 exports.increaseFromCart = async (req, res, next) => {
   const { productId } = req.body;
-  console.log(productId);
   const userId = req.user.id;
 
   const cart = await prisma.cart.findFirst(

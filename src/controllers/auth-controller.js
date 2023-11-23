@@ -10,13 +10,12 @@ exports.register = async (req, res, next) => {
     if (error) {
       return next(error);
     }
-    console.log(value);
+
     value.password = await bcrypt.hash(value.password, 12);
     const user = await prisma.user.create({
       data: {
         username: value.username,
         password: value.password,
-        confirmPassword: value.confirmPassword,
         email: value.email,
         isAdmin: false,
         mobile: "" + value.mobile,
@@ -42,11 +41,10 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const { value, error } = loginSchema.validate(req.body);
-    console.log(value);
     if (error) {
       return next(error);
     }
-    console.log(value);
+
     const user = await prisma.user.findFirst({
       where: {
         username: value.username,

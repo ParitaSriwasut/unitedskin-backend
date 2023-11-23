@@ -16,10 +16,10 @@ app.use(express.json());
 
 app.use("/auth", authRoute);
 app.use("/product", productRoute);
-app.use("/order", orderRoute);
+app.use("/orders", orderRoute);
 app.use("/cart", cartRoute);
 app.use(notFoundMiddleware);
 app.use(errorMiddleWare);
 
-const PORT = process.env.PORT || "3000";
+const PORT = process.env.PORT || "4000";
 app.listen(PORT, () => console.log(`server running on port: ${PORT}`));

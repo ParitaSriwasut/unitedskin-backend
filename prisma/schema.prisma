@@ -15,9 +15,9 @@ model User {
   password String
 
   mobile  String
-  Payment Payment[]
-  Cart    Cart[]
-  Order   Order[]
+  payment Payment[]
+  cart    Cart[]
+  order   Order[]
   isAdmin Boolean   @default(false)
 }
 
@@ -42,10 +42,10 @@ model Payment {
   userId        Int
   address       String
   sumAmount     Decimal
-  paymentMethod String
+  paymentQRCode String
   createdAt     DateTime
   updatedAt     DateTime
-  Order         Order[]
+  order         Order[]
 }
 
 model Cart {
