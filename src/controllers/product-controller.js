@@ -81,7 +81,7 @@ exports.updateProduct = async (req, res, next) => {
     }
     const image = await upload(req.file.path);
 
-    await prisma.product.update({
+    const product = await prisma.product.update({
       data: {
         categoryName: req.body.categoryName,
         productName: req.body.productName,
@@ -94,7 +94,7 @@ exports.updateProduct = async (req, res, next) => {
         id: +req.params.id,
       },
     });
-    res.status(200).json({ message: "product updated" });
+    res.status(200).json({ product: product });
   } catch (err) {
     next(err);
   } finally {
