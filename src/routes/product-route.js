@@ -8,6 +8,8 @@ router.get("", authenticateMiddleware, productController.productList);
 
 router.get("/:id", authenticateMiddleware, productController.productDetails);
 
+router.get("/search", authenticateMiddleware, productController.searchProduct);
+
 router.post(
   "",
   authenticateMiddleware,

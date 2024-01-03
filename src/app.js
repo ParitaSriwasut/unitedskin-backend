@@ -16,6 +16,7 @@ app.use(express.json());
 
 app.use("/auth", authRoute);
 app.use("/product", productRoute);
+app.use("/search", productRoute);
 app.use("/orders", orderRoute);
 app.use("/cart", cartRoute);
 app.use(notFoundMiddleware);

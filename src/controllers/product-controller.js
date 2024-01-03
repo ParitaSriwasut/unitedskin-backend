@@ -139,3 +139,33 @@ exports.deleteProduct = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.searchProduct = async (req, res, next) => {
+  const { searchText, minPrice, maxPrice } = req.query;
+
+  try {
+    const product = await prisma.product.findMany({
+      where: {
+        OR: [
+          { productName: { contains: searchText, mode: "insensitive" } },
+          { categoryName: { contains: searchText, mode: "insensitive" } },
+        ],
+        productPrice: {
+          gte: minPrice ? parseFloat(minPrice) : undefined,
+          lte: maxPrice ? parseFloat(maxPrice) : undefined,
+        },
+      },
+      orderBy: { id: "desc" }, // Order by id (assuming higher id newer product)
+    });
+
+    // Returning the products to the client with JSON format
+    res.send({
+      products: product.map((product) => ({
+        ...product,
+        id: product.id,
+      })),
+    });
+  } catch (err) {
+    next(createError("Error searching for product: " + err.message, 500));
+  }
+};
