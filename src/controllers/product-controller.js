@@ -141,26 +141,21 @@ exports.deleteProduct = async (req, res, next) => {
 };
 
 exports.searchProduct = async (req, res, next) => {
-  const { searchText, minPrice, maxPrice } = req.query;
+  const { searchText } = req.query;
 
   try {
-    const product = await prisma.product.findMany({
+    const products = await prisma.product.findMany({
       where: {
-        OR: [
-          { productName: { contains: searchText, mode: "insensitive" } },
-          { categoryName: { contains: searchText, mode: "insensitive" } },
-        ],
-        productPrice: {
-          gte: minPrice ? parseFloat(minPrice) : undefined,
-          lte: maxPrice ? parseFloat(maxPrice) : undefined,
-        },
+        OR: [{ productName: { contains: searchText, mode: "insensitive" } }],
       },
-      orderBy: { id: "desc" }, // Order by id (assuming higher id newer product)
+      orderBy: { id: "desc" },
     });
 
-    // Returning the products to the client with JSON format
+    // Log the generated Prisma query
+    console.log(prisma.$queryRaw`SELECT * FROM "Product" WHERE ...`);
+
     res.send({
-      products: product.map((product) => ({
+      products: products.map((product) => ({
         ...product,
         id: product.id,
       })),
