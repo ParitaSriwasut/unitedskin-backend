@@ -22,7 +22,6 @@ exports.register = async (req, res, next) => {
         name: value.name,
       },
     });
-
     const payload = { userId: user.id };
     const accessToken = jwt.sign(
       payload,
